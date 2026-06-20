@@ -65,7 +65,7 @@ export default function TodayReadingPage() {
       : await supabase.from('reading_logs').insert(payload).select().single();
 
     setSaving(false);
-    if (error) { setMessage('Error saving. Please try again.'); return; }
+    if (error) { setMessage(`Error: ${error.message} (${error.code})`); return; }
     setLog(data);
     setMessage(status === 'complete' ? 'Marked as complete!' : 'Marked as skipped.');
   }
