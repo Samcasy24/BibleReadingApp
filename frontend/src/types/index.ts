@@ -56,8 +56,7 @@ export interface ReadingLog {
   user_id: string;
   plan_entry_id: string;
   status: ReadingStatus;
-  enjoyment: string | null;
-  enlightenment: string | null;
+  note: string | null;
   is_private: boolean;
   logged_at: string;
   plan_entry?: PlanEntry;

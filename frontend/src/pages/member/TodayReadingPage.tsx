@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../hooks/useAuth';
 import type { PlanEntry, ReadingLog } from '../../types';
@@ -8,8 +8,7 @@ export default function TodayReadingPage() {
   const { profile } = useAuth();
   const [entry, setEntry] = useState<PlanEntry | null>(null);
   const [log, setLog] = useState<ReadingLog | null>(null);
-  const [enjoyment, setEnjoyment] = useState('');
-  const [enlightenment, setEnlightenment] = useState('');
+  const [note, setNote] = useState('');
   const [isPrivate, setIsPrivate] = useState(false);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
@@ -37,8 +36,7 @@ export default function TodayReadingPage() {
           .maybeSingle();
         if (logData) {
           setLog(logData);
-          setEnjoyment(logData.enjoyment ?? '');
-          setEnlightenment(logData.enlightenment ?? '');
+          setNote(logData.note ?? '');
           setIsPrivate(logData.is_private);
         }
       }
@@ -56,8 +54,7 @@ export default function TodayReadingPage() {
       user_id: profile.id,
       plan_entry_id: entry.id,
       status,
-      enjoyment: enjoyment.slice(0, 500) || null,
-      enlightenment: enlightenment.slice(0, 500) || null,
+      note: note.slice(0, 500) || null,
       is_private: isPrivate,
       logged_at: new Date().toISOString(),
     };
@@ -69,13 +66,13 @@ export default function TodayReadingPage() {
     setSaving(false);
     if (error) { setMessage('Error saving. Please try again.'); return; }
     setLog(data);
-    setMessage(status === 'complete' ? 'âœ… Marked as complete!' : 'â­ Marked as skipped.');
+    setMessage(status === 'complete' ? 'Marked as complete!' : 'Marked as skipped.');
   }
 
   function formatReference(e: PlanEntry) {
     const start = e.verse_start ? `${e.chapter_start}:${e.verse_start}` : `${e.chapter_start}`;
     const end = e.verse_end ? `${e.chapter_end}:${e.verse_end}` : `${e.chapter_end}`;
-    return start === end ? `${e.book} ${start}` : `${e.book} ${start} â€“ ${end}`;
+    return start === end ? `${e.book} ${start}` : `${e.book} ${start} - ${end}`;
   }
 
   function bibleUrl(e: PlanEntry) {
@@ -83,7 +80,7 @@ export default function TodayReadingPage() {
     return `https://online.recoveryversion.bible/books/${book}/chapters/${e.chapter_start}`;
   }
 
-  if (loading) return <p className="text-gray-500">Loadingâ€¦</p>;
+  if (loading) return <p className="text-gray-500">Loading...</p>;
 
   return (
     <div className="max-w-2xl space-y-6">
@@ -98,7 +95,6 @@ export default function TodayReadingPage() {
         </div>
       ) : (
         <>
-          {/* Reading reference card */}
           <div className="bg-green-50 border border-green-200 rounded-xl p-6">
             <p className="text-xs uppercase tracking-wider text-green-600 font-semibold mb-2">Recovery Version</p>
             <h2 className="text-2xl font-bold text-green-900">{formatReference(entry)}</h2>
@@ -109,55 +105,40 @@ export default function TodayReadingPage() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 mt-3 text-sm text-green-700 font-medium hover:underline"
             >
-              ðŸ“– Read {formatReference(entry)} online â†’
+              Read {formatReference(entry)} online
             </a>
             {log && (
               <span className={`block mt-3 w-fit px-3 py-1 rounded-full text-xs font-medium ${log.status === 'complete' ? 'bg-green-200 text-green-800' : 'bg-gray-200 text-gray-700'}`}>
-                {log.status === 'complete' ? 'âœ… Completed' : 'â­ Skipped'}
+                {log.status === 'complete' ? 'Completed' : 'Skipped'}
               </span>
             )}
           </div>
 
-          {/* Notes â€” only shown before logging */}
           {!log && (
-            <div className="bg-white border border-gray-200 rounded-xl p-5 space-y-4">
-              {/* Enjoyment */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Enjoyment <span className="text-gray-400 font-normal">(optional)</span></label>
-                <textarea
-                  value={enjoyment}
-                  onChange={e => setEnjoyment(e.target.value.slice(0, 500))}
-                  maxLength={500}
-                  rows={3}
-                  placeholder="Share your enjoyment in brief with other saintsâ€¦"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 resize-none"
-                />
-                <p className="text-xs text-gray-400 text-right mt-0.5">{enjoyment.length}/500</p>
-              </div>
-
-              {/* Enlightenment */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Enlightenment <span className="text-gray-400 font-normal">(optional)</span></label>
-                <textarea
-                  value={enlightenment}
-                  onChange={e => setEnlightenment(e.target.value.slice(0, 500))}
-                  maxLength={500}
-                  rows={3}
-                  placeholder="Share a truth or insight you received from this passageâ€¦"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 resize-none"
-                />
-                <p className="text-xs text-gray-400 text-right mt-0.5">{enlightenment.length}/500</p>
-              </div>
-
-              <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={isPrivate}
-                  onChange={e => setIsPrivate(e.target.checked)}
-                  className="accent-green-700"
-                />
-                Keep notes private
+            <div className="bg-white border border-gray-200 rounded-xl p-5 space-y-3">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Enjoyment &amp; Enlightenment <span className="text-gray-400 font-normal">(optional)</span>
               </label>
+              <textarea
+                value={note}
+                onChange={e => setNote(e.target.value.slice(0, 500))}
+                maxLength={500}
+                rows={4}
+                placeholder="Share your enjoyment in brief with other saints..."
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 resize-none"
+              />
+              <div className="flex items-center justify-between">
+                <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={isPrivate}
+                    onChange={e => setIsPrivate(e.target.checked)}
+                    className="accent-green-700"
+                  />
+                  Keep note private
+                </label>
+                <span className="text-xs text-gray-400">{note.length}/500</span>
+              </div>
             </div>
           )}
 
@@ -170,7 +151,7 @@ export default function TodayReadingPage() {
                 disabled={saving}
                 className="flex-1 bg-green-700 hover:bg-green-800 disabled:opacity-60 text-white font-semibold py-2 rounded-lg transition-colors"
               >
-                {saving ? 'Savingâ€¦' : 'âœ… Mark as Complete'}
+                {saving ? 'Saving...' : 'Mark as Complete'}
               </button>
               <button
                 onClick={() => markAs('skipped')}
@@ -186,4 +167,3 @@ export default function TodayReadingPage() {
     </div>
   );
 }
-

@@ -92,8 +92,8 @@ export default function PlanPage() {
               <div>
                 <p className="font-medium text-gray-800">{formatRef(entry)}</p>
                 <p className="text-xs text-gray-400 mt-0.5">{format(d, 'EEE, MMM d')}</p>
-                {log?.enjoyment && !log.is_private && (
-                  <p className="text-xs text-gray-500 mt-2 italic">"{log.enjoyment}"</p>
+                {log?.note && !log.is_private && (
+                  <p className="text-xs text-gray-500 mt-2 italic">"{log.note}"</p>
                 )}
               </div>
               <span className="shrink-0 text-sm font-medium">
