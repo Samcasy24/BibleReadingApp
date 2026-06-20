@@ -31,6 +31,12 @@ export default function AdminPage() {
     loadAll();
   }
 
+  async function deleteGroup(id: string, name: string) {
+    if (!window.confirm(`Permanently delete "${name}"? This removes all memberships and cannot be undone.`)) return;
+    await supabase.from("groups").delete().eq("id", id);
+    loadAll();
+  }
+
   async function changeRole(userId: string, role: "admin" | "member") {
     await supabase.from("profiles").update({ role }).eq("id", userId);
     loadAll();
@@ -98,6 +104,7 @@ export default function AdminPage() {
                     {!g.is_archived && (
                       <button onClick={() => archiveGroup(g.id)} className="text-xs bg-red-50 hover:bg-red-100 text-red-600 px-3 py-1 rounded-lg transition-colors">Archive</button>
                     )}
+                    <button onClick={() => deleteGroup(g.id, g.name)} className="text-xs bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg transition-colors">Delete</button>
                   </div>
                 </div>
               </div>
