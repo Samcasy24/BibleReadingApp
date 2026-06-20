@@ -3,6 +3,7 @@ import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../hooks/useAuth';
 import type { PlanEntry, ReadingLog } from '../../types';
 import { format, parseISO } from 'date-fns';
+import { bibleUrl } from '../../lib/bibleUrl';
 
 export default function TodayReadingPage() {
   const { profile } = useAuth();
@@ -75,11 +76,6 @@ export default function TodayReadingPage() {
     return start === end ? `${e.book} ${start}` : `${e.book} ${start} - ${end}`;
   }
 
-  function bibleUrl(e: PlanEntry) {
-    const book = encodeURIComponent(e.book.replace(/ /g, '_'));
-    return `https://online.recoveryversion.bible/books/${book}/chapters/${e.chapter_start}`;
-  }
-
   if (loading) return <p className="text-gray-500">Loading...</p>;
 
   return (
@@ -100,7 +96,7 @@ export default function TodayReadingPage() {
             <h2 className="text-2xl font-bold text-green-900">{formatReference(entry)}</h2>
             <p className="text-sm text-gray-500 mt-2">Scheduled: {format(parseISO(entry.scheduled_date), 'MMMM d, yyyy')}</p>
             <a
-              href={bibleUrl(entry)}
+              href={bibleUrl(entry.book, entry.chapter_start)}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 mt-3 text-sm text-green-700 font-medium hover:underline"
