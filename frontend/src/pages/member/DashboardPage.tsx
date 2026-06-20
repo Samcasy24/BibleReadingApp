@@ -78,7 +78,13 @@ export default function DashboardPage() {
         completedToday ? 'bg-green-50 border-green-200' : 'bg-amber-50 border-amber-200'
       }`}>
         <div className="flex items-center gap-3">
-          <span className="text-2xl">{completedToday ? 'âœ…' : 'ðŸ“–'}</span>
+          <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${completedToday ? 'bg-green-200' : 'bg-amber-200'}`}>
+            {completedToday ? (
+              <svg className="w-5 h-5 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+            ) : (
+              <svg className="w-5 h-5 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>
+            )}
+          </div>
           <div>
             <p className="font-semibold text-slate-800">
               {completedToday ? "Today's reading done!" : "Today's reading is waiting"}
@@ -132,7 +138,9 @@ export default function DashboardPage() {
       <div>
         <div className="flex items-center justify-between mb-3">
           <h2 className="font-semibold text-slate-700">My Groups</h2>
-          <Link to="/progress" className="text-sm text-green-700 hover:underline font-medium">View Progress â†’</Link>
+          <Link to="/progress" className="text-sm text-green-700 hover:underline font-medium flex items-center gap-1">View Progress
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
+          </Link>
         </div>
         {groups.length === 0 ? (
           <div className="bg-white rounded-xl border border-slate-200 p-8 text-center text-slate-400 text-sm">
@@ -151,7 +159,7 @@ export default function DashboardPage() {
                     <h3 className="font-semibold text-slate-800 group-hover:text-green-700 transition-colors">{group.name}</h3>
                     {group.description && <p className="text-sm text-slate-500 mt-1">{group.description}</p>}
                   </div>
-                  <span className="text-slate-300 group-hover:text-green-500 transition-colors text-lg">â†’</span>
+                  <svg className="w-4 h-4 text-slate-300 group-hover:text-green-500 transition-colors shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
                 </div>
               </Link>
             ))}

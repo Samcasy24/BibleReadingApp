@@ -32,7 +32,7 @@ export default function ProgressPage() {
   function formatRef(e: PlanEntry) {
     const start = e.verse_start ? `${e.chapter_start}:${e.verse_start}` : `${e.chapter_start}`;
     const end = e.verse_end ? `${e.chapter_end}:${e.verse_end}` : `${e.chapter_end}`;
-    return start === end ? `${e.book} ${start}` : `${e.book} ${start} â€“ ${end}`;
+    return start === end ? `${e.book} ${start}` : `${e.book} ${start} - ${end}`;
   }
 
   if (loading) return (
