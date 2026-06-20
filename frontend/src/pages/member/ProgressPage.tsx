@@ -68,8 +68,8 @@ export default function ProgressPage() {
                   <div>
                     <p className="font-medium text-gray-800">{formatRef(log.plan_entry)}</p>
                     <p className="text-xs text-gray-400 mt-0.5">{format(parseISO(log.logged_at), 'MMM d, yyyy')}</p>
-                    {log.note && !log.is_private && (
-                      <p className="text-xs text-gray-500 mt-2 italic">"{log.note}"</p>
+                    {log.enjoyment && !log.is_private && (
+                      <p className="text-xs text-gray-500 mt-2 italic">"{log.enjoyment}"</p>
                     )}
                   </div>
                   <span className={`shrink-0 text-sm font-medium ${log.status === 'complete' ? 'text-green-700' : 'text-gray-400'}`}>
