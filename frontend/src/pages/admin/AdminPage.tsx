@@ -37,6 +37,18 @@ export default function AdminPage() {
     loadAll();
   }
 
+  async function deletePlan(id: string, name: string) {
+    if (!window.confirm(`Permanently delete plan "${name}"? This also deletes all reading entries and logs tied to it.`)) return;
+    await supabase.from("reading_plans").delete().eq("id", id);
+    loadAll();
+  }
+
+  async function deleteUser(id: string, username: string) {
+    if (!window.confirm(`Permanently delete user "${username}"? This cannot be undone.`)) return;
+    await supabase.from("profiles").delete().eq("id", id);
+    loadAll();
+  }
+
   async function changeRole(userId: string, role: "admin" | "member") {
     await supabase.from("profiles").update({ role }).eq("id", userId);
     loadAll();
@@ -127,7 +139,10 @@ export default function AdminPage() {
                     <p className="font-medium text-gray-800">{p.name}</p>
                     <p className="text-xs text-gray-400 mt-0.5">{p.start_date} to {p.end_date}</p>
                   </div>
-                  <Link to={`/plan/${p.id}`} className="text-xs bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-lg transition-colors">View</Link>
+                  <div className="flex gap-2">
+                    <Link to={`/plan/${p.id}`} className="text-xs bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-lg transition-colors">View</Link>
+                    <button onClick={() => deletePlan(p.id, p.name)} className="text-xs bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg transition-colors">Delete</button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -164,14 +179,24 @@ export default function AdminPage() {
                     <p className="font-medium text-gray-800">{u.username}</p>
                     <p className="text-xs text-gray-400">{u.email}</p>
                   </div>
-                  <select
-                    value={u.role}
-                    onChange={e => changeRole(u.id, e.target.value as "admin" | "member")}
-                    className="text-sm border border-gray-300 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-green-600"
-                  >
-                    <option value="member">Member</option>
-                    <option value="admin">Admin</option>
-                  </select>
+                  <div className="flex items-center gap-2">
+                    <select
+                      value={u.role}
+                      onChange={e => changeRole(u.id, e.target.value as "admin" | "member")}
+                      className="text-sm border border-gray-300 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-green-600"
+                    >
+                      <option value="member">Member</option>
+                      <option value="admin">Admin</option>
+                    </select>
+                    {u.role !== "admin" && (
+                      <button
+                        onClick={() => deleteUser(u.id, u.username)}
+                        className="text-xs bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg transition-colors"
+                      >
+                        Delete
+                      </button>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
