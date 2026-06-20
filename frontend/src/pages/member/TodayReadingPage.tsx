@@ -37,7 +37,7 @@ export default function TodayReadingPage() {
           .maybeSingle();
         if (logData) {
           setLog(logData);
-          setNote(logData.note ?? '');
+          setNote(logData.enjoyment ?? '');
           setIsPrivate(logData.is_private);
         }
       }
@@ -55,7 +55,7 @@ export default function TodayReadingPage() {
       user_id: profile.id,
       plan_entry_id: entry.id,
       status,
-      note: note.slice(0, 500) || null,
+      enjoyment: note.slice(0, 500) || null,
       is_private: isPrivate,
       logged_at: new Date().toISOString(),
     };
