@@ -73,9 +73,13 @@ export default function ProgressPage() {
             {logs.map(log => (
               <div key={log.id} className="px-5 py-4 flex items-start justify-between gap-4">
                 <div className="flex items-start gap-3">
-                  <span className={`mt-0.5 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${log.status === 'complete' ? 'bg-green-100 text-green-600' : 'bg-slate-100 text-slate-400'}`}>
-                    {log.status === 'complete' ? '+' : '-'}
-                  </span>
+                  {log.status === 'complete' ? (
+                    <svg className="mt-0.5 w-5 h-5 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                    </svg>
+                  ) : (
+                    <span className="mt-0.5 w-5 h-5 rounded-full border-2 border-slate-200 shrink-0 block" />
+                  )}
                   <div>
                     <p className="font-medium text-slate-800 text-sm">{formatRef(log.plan_entry)}</p>
                     <p className="text-xs text-slate-400 mt-0.5">{format(parseISO(log.logged_at), 'MMM d, yyyy')}</p>
