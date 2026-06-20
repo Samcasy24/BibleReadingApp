@@ -5,7 +5,7 @@ import { useAuth } from '../../hooks/useAuth';
 import type { Group, ReadingPlan, Profile } from '../../types';
 import ProgressBar from '../../components/ProgressBar';
 
-interface MemberRow { id: string; username: string; completed: number; skipped: number; }
+interface MemberRow { id: string; username: string; completed: number; skipped: number; latestEnjoyment: string | null; }
 
 export default function GroupPage() {
   const { groupId } = useParams<{ groupId: string }>();
@@ -35,11 +35,12 @@ export default function GroupPage() {
       const rows: MemberRow[] = [];
       for (const m of mData ?? []) {
         const p = (Array.isArray(m.profiles) ? m.profiles[0] : m.profiles) as Profile | null;
-        const { data: logs } = await supabase.from('reading_logs').select('status').eq('user_id', m.user_id);
-        type LogRow = { status: string };
-        const completed = (logs as LogRow[] | null)?.filter(l => l.status === 'complete').length ?? 0;
-        const skipped = (logs as LogRow[] | null)?.filter(l => l.status === 'skipped').length ?? 0;
-        rows.push({ id: m.user_id, username: p?.username ?? 'Unknown', completed, skipped });
+        const { data: logs } = await supabase.from('reading_logs').select('status, enjoyment, is_private').eq('user_id', m.user_id);
+        const logList = (logs ?? []) as { status: string; enjoyment: string | null; is_private: boolean }[];
+        const completed = logList.filter(l => l.status === 'complete').length;
+        const skipped = logList.filter(l => l.status === 'skipped').length;
+        const latestWithNote = logList.find(l => l.enjoyment && !l.is_private);
+        rows.push({ id: m.user_id, username: p?.username ?? 'Unknown', completed, skipped, latestEnjoyment: latestWithNote?.enjoyment ?? null });
       }
       rows.sort((a, b) => b.completed - a.completed);
       setMembers(rows);
@@ -126,6 +127,9 @@ export default function GroupPage() {
                   height="h-2"
                   color={isMe ? 'bg-green-500' : 'bg-slate-400'}
                 />
+                {m.latestEnjoyment && (
+                  <p className="text-xs text-slate-500 mt-2 italic leading-relaxed">"{m.latestEnjoyment}"</p>
+                )}
               </div>
             );
           })}
@@ -137,8 +141,3 @@ export default function GroupPage() {
     </div>
   );
 }
-
-
-
-interface MemberRow { id: string; username: string; completed: number; skipped: number; }
-
