@@ -4,6 +4,8 @@ import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
+import ForgotPasswordPage from './pages/auth/ForgotPasswordPage';
+import ResetPasswordPage from './pages/auth/ResetPasswordPage';
 import DashboardPage from './pages/member/DashboardPage';
 import TodayReadingPage from './pages/member/TodayReadingPage';
 import PlanPage from './pages/member/PlanPage';
@@ -23,6 +25,8 @@ export default function App() {
         <Routes>
           <Route path="/" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/reading/today" element={<TodayReadingPage />} />
